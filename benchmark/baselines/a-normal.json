@@ -1,0 +1,35 @@
+{
+  "name": "a-normal",
+  "note": "普通马娘无 buff（默认测试马娘 105902）",
+  "uma": 105902,
+  "qie": "none",
+  "shield": 0,
+  "config": {
+    "pt_favor_rate": 1.931954,
+    "search_n": 8192,
+    "search_group_size": 1024,
+    "expected_search_stdev": 3300.0
+  },
+  "records": [
+    {
+      "trainer": "handwritten",
+      "search_n": 0,
+      "seed0": 73200,
+      "games": 100,
+      "score_mean": 81802.8,
+      "score_sd": 2892.5,
+      "pt_mean": 11784.9,
+      "pt_sd": 324.4
+    },
+    {
+      "trainer": "search",
+      "search_n": 8192,
+      "seed0": 73200,
+      "games": 10,
+      "score_mean": 86212.7,
+      "score_sd": 1210.4,
+      "pt_mean": 12741.1,
+      "pt_sd": 238.7
+    }
+  ]
+}

@@ -1,0 +1,50 @@
+# 骏大祭剧本仓（matsuri / scenarioId 15）workspace 根
+#
+# 独立仓：以 Git Submodule `umaai_next/` 挂载引擎仓并按 path 依赖引用稳定面。
+# 依赖三档（详见引擎仓 docs/scenario/README.md）：
+#   1. 当前：仓内 Git Submodule（`umaai_next/`）
+#   2. 稳定期：git + tag（同一 repo、同一 tag）
+#   3. 下游（Web / Android）：default-features = false（剪掉并行后端与文件监听）
+[workspace]
+resolver = "3"
+members = [
+    "crates/matsuri-core",
+    "crates/matsuri-sim",
+    "crates/matsuri-ai",
+    "crates/matsuri-cli",
+    "crates/matsuri-tools",
+    "crates/matsuri-launcher",
+]
+exclude = ["umaai_next"]
+
+[workspace.package]
+version = "0.1.5"
+edition = "2024"
+publish = false
+
+[workspace.dependencies]
+# 引擎稳定面（matsuri-core 只依赖前三个；终端样例面另引 umaai-cli）
+umaai-core = { path = "umaai_next/crates/umaai-core" }
+umasim = { path = "umaai_next/crates/umasim" }
+umaai = { path = "umaai_next/crates/umaai" }
+umaai-cli = { path = "umaai_next/crates/umaai-cli" }
+# 分发客户端（数据更新）：零引擎依赖，启动器只做频道声明与呈现
+umaai-update = { path = "umaai_next/crates/umaai-update" }
+clap = { version = "4.6", features = ["derive"] }
+
+# 本仓内部 crate（有消费者时再登记下一个）
+matsuri-core = { path = "crates/matsuri-core" }
+matsuri-sim = { path = "crates/matsuri-sim" }
+matsuri-ai = { path = "crates/matsuri-ai" }
+
+anyhow = "1.0.104"
+# 日志门面（诊断 `diag!` 的运行时出口；与引擎同版本；`std` 特性供入口层装箱日志器）
+log = { version = "0.4.34", features = ["std"] }
+rand = { version = "0.9.5", features = ["std_rng"] }
+serde = { version = "1.0.229", features = ["derive", "rc"] }
+serde_json = "1.0.154"
+toml = "0.9.12"
+# 搜索并行后端（与引擎 umasim 同版，已在 Cargo.lock）
+rayon = "1.12.0"
+# 程序更新包（zip）解压：只读、纯 Rust deflate 后端
+zip = { version = "8.6", default-features = false, features = ["deflate-flate2-zlib-rs"] }

@@ -1,0 +1,40 @@
+# 骏大祭剧本仓 CI：引擎仓作为 Git Submodule 挂载于 `umaai_next/`，checkout 时启用 submodules 即可。
+# 数据自持：引擎静态数据已拷入统一数据目录 `data/`（含双配置默认层），测试零参数即跑。
+name: CI
+
+on:
+  push:
+    branches: [main]
+    paths-ignore: '**.md'
+  pull_request:
+    branches: [main]
+    paths-ignore: '**.md'
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: true
+
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          components: rustfmt, clippy
+
+      - name: fmt
+        run: cargo fmt --all --check
+
+      - name: check
+        run: cargo check --workspace --all-targets
+
+      - name: clippy
+        run: cargo clippy --workspace --all-targets -- -D warnings
+
+      - name: test
+        run: cargo test --workspace --release
